@@ -1,0 +1,413 @@
+{
+  "info": {
+    "name": "Bah-Food API",
+    "description": "Coleção de endpoints REST do projeto Bah-Food — Sprint 1\nBackend: Node.js + Express | Banco: PostgreSQL\nBase URL: http://localhost:3000",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Verifica se o servidor está no ar."
+          },
+          "response": [
+            {
+              "name": "Servidor OK",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"status\": \"ok\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Usuários",
+      "item": [
+        {
+          "name": "POST /api/usuarios — Criar Cliente",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Joao Gaucho\",\n  \"email\": \"joao@bahfood.com\",\n  \"telefone\": \"51999990000\",\n  \"perfil\": \"CLIENTE\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/usuarios",
+              "host": ["{{base_url}}"],
+              "path": ["api", "usuarios"]
+            },
+            "description": "Cria um usuário com perfil CLIENTE. Perfis aceitos: CLIENTE, PRESTADOR."
+          },
+          "response": [
+            {
+              "name": "Criado com sucesso",
+              "status": "Created",
+              "code": 201,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": 1,\n  \"nome\": \"Joao Gaucho\",\n  \"email\": \"joao@bahfood.com\",\n  \"telefone\": \"51999990000\",\n  \"perfil\": \"CLIENTE\",\n  \"created_at\": \"2026-05-11T18:19:24.245Z\"\n}"
+            },
+            {
+              "name": "Email já cadastrado",
+              "status": "Conflict",
+              "code": 409,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"erro\": \"Email ja cadastrado\"\n}"
+            },
+            {
+              "name": "Campos obrigatórios ausentes",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"erro\": \"Campos obrigatorios: nome, email, perfil\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /api/usuarios — Criar Prestador",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Carlos Entregador\",\n  \"email\": \"carlos@bahfood.com\",\n  \"telefone\": \"51988880000\",\n  \"perfil\": \"PRESTADOR\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/usuarios",
+              "host": ["{{base_url}}"],
+              "path": ["api", "usuarios"]
+            },
+            "description": "Cria um usuário com perfil PRESTADOR (entregador)."
+          },
+          "response": [
+            {
+              "name": "Criado com sucesso",
+              "status": "Created",
+              "code": 201,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": 2,\n  \"nome\": \"Carlos Entregador\",\n  \"email\": \"carlos@bahfood.com\",\n  \"telefone\": \"51988880000\",\n  \"perfil\": \"PRESTADOR\",\n  \"created_at\": \"2026-05-11T18:20:27.023Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/usuarios/:id — Buscar Usuário",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/usuarios/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "usuarios", "1"]
+            },
+            "description": "Retorna os dados de um usuário pelo ID."
+          },
+          "response": [
+            {
+              "name": "Usuário encontrado",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": 1,\n  \"nome\": \"Joao Gaucho\",\n  \"email\": \"joao@bahfood.com\",\n  \"telefone\": \"51999990000\",\n  \"perfil\": \"CLIENTE\",\n  \"created_at\": \"2026-05-11T18:19:24.245Z\"\n}"
+            },
+            {
+              "name": "Não encontrado",
+              "status": "Not Found",
+              "code": 404,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"erro\": \"Usuario nao encontrado\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/usuarios/:id/pedidos — Pedidos do Usuário",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/usuarios/1/pedidos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "usuarios", "1", "pedidos"]
+            },
+            "description": "Lista todos os pedidos associados ao usuário (como cliente ou prestador)."
+          },
+          "response": [
+            {
+              "name": "Lista de pedidos",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  {\n    \"id\": 1,\n    \"cliente_id\": 1,\n    \"prestador_id\": 2,\n    \"status\": \"ACEITO\",\n    \"endereco_entrega\": \"Rua Borges de Medeiros, 100 - Porto Alegre\",\n    \"observacao\": \"Sem cebola\",\n    \"total\": \"103.80\",\n    \"created_at\": \"2026-05-11T18:20:32.553Z\",\n    \"updated_at\": \"2026-05-11T18:20:46.065Z\",\n    \"itens\": [\n      { \"id\": 1, \"pedido_id\": 1, \"nome_item\": \"Churrasco Gaucho\", \"quantidade\": 2, \"preco_unitario\": 45.90 },\n      { \"id\": 2, \"pedido_id\": 1, \"nome_item\": \"Chimarrao\", \"quantidade\": 1, \"preco_unitario\": 12.00 }\n    ]\n  }\n]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pedidos",
+      "item": [
+        {
+          "name": "POST /api/pedidos — Criar Pedido",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente_id\": 1,\n  \"endereco_entrega\": \"Rua Borges de Medeiros, 100 - Porto Alegre\",\n  \"observacao\": \"Sem cebola\",\n  \"itens\": [\n    {\n      \"nome_item\": \"Churrasco Gaucho\",\n      \"quantidade\": 2,\n      \"preco_unitario\": 45.90\n    },\n    {\n      \"nome_item\": \"Chimarrao\",\n      \"quantidade\": 1,\n      \"preco_unitario\": 12.00\n    }\n  ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pedidos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos"]
+            },
+            "description": "Cria um novo pedido com itens. O total é calculado automaticamente. Status inicial: PENDENTE."
+          },
+          "response": [
+            {
+              "name": "Pedido criado",
+              "status": "Created",
+              "code": 201,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": 1,\n  \"cliente_id\": 1,\n  \"prestador_id\": null,\n  \"status\": \"PENDENTE\",\n  \"endereco_entrega\": \"Rua Borges de Medeiros, 100 - Porto Alegre\",\n  \"observacao\": \"Sem cebola\",\n  \"total\": \"103.80\",\n  \"created_at\": \"2026-05-11T18:20:32.553Z\",\n  \"updated_at\": \"2026-05-11T18:20:32.553Z\",\n  \"itens\": [\n    { \"id\": 1, \"pedido_id\": 1, \"nome_item\": \"Churrasco Gaucho\", \"quantidade\": 2, \"preco_unitario\": 45.90 },\n    { \"id\": 2, \"pedido_id\": 1, \"nome_item\": \"Chimarrao\", \"quantidade\": 1, \"preco_unitario\": 12.00 }\n  ]\n}"
+            },
+            {
+              "name": "Cliente não encontrado",
+              "status": "Not Found",
+              "code": 404,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"erro\": \"Cliente nao encontrado\"\n}"
+            },
+            {
+              "name": "Campos obrigatórios ausentes",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"erro\": \"Campos obrigatorios: cliente_id, endereco_entrega, itens (array nao vazio)\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/pedidos — Listar Todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pedidos",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos"]
+            },
+            "description": "Lista todos os pedidos. Aceita filtros opcionais via query string."
+          },
+          "response": [
+            {
+              "name": "Lista completa",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  {\n    \"id\": 1,\n    \"cliente_id\": 1,\n    \"prestador_id\": null,\n    \"status\": \"PENDENTE\",\n    \"endereco_entrega\": \"Rua Borges de Medeiros, 100 - Porto Alegre\",\n    \"observacao\": \"Sem cebola\",\n    \"total\": \"103.80\",\n    \"created_at\": \"2026-05-11T18:20:32.553Z\",\n    \"updated_at\": \"2026-05-11T18:20:32.553Z\",\n    \"itens\": [\n      { \"id\": 1, \"pedido_id\": 1, \"nome_item\": \"Churrasco Gaucho\", \"quantidade\": 2, \"preco_unitario\": 45.90 }\n    ]\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/pedidos?status=PENDENTE — Listar Pedidos Abertos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pedidos?status=PENDENTE",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos"],
+              "query": [{ "key": "status", "value": "PENDENTE", "description": "Filtra por status. Valores: PENDENTE, ACEITO, EM_PREPARO, COLETADO, FINALIZADO, CANCELADO" }]
+            },
+            "description": "Lista pedidos pendentes (abertos), usados pelo prestador para visualizar demandas disponíveis."
+          },
+          "response": [
+            {
+              "name": "Pedidos pendentes",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  {\n    \"id\": 1,\n    \"status\": \"PENDENTE\",\n    \"total\": \"103.80\",\n    \"itens\": []\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "GET /api/pedidos?cliente_id=1 — Filtrar por Cliente",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pedidos?cliente_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos"],
+              "query": [{ "key": "cliente_id", "value": "1", "description": "Filtra pedidos de um cliente específico" }]
+            },
+            "description": "Lista pedidos filtrados por cliente."
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/pedidos/:id — Buscar por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/pedidos/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos", "1"]
+            },
+            "description": "Retorna um pedido completo com seus itens pelo ID."
+          },
+          "response": [
+            {
+              "name": "Pedido encontrado",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": 1,\n  \"cliente_id\": 1,\n  \"prestador_id\": null,\n  \"status\": \"PENDENTE\",\n  \"endereco_entrega\": \"Rua Borges de Medeiros, 100 - Porto Alegre\",\n  \"observacao\": \"Sem cebola\",\n  \"total\": \"103.80\",\n  \"created_at\": \"2026-05-11T18:20:32.553Z\",\n  \"updated_at\": \"2026-05-11T18:20:32.553Z\",\n  \"itens\": [\n    { \"id\": 1, \"pedido_id\": 1, \"nome_item\": \"Churrasco Gaucho\", \"quantidade\": 2, \"preco_unitario\": 45.90 },\n    { \"id\": 2, \"pedido_id\": 1, \"nome_item\": \"Chimarrao\", \"quantidade\": 1, \"preco_unitario\": 12.00 }\n  ]\n}"
+            },
+            {
+              "name": "Não encontrado",
+              "status": "Not Found",
+              "code": 404,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"erro\": \"Pedido nao encontrado\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "PATCH /api/pedidos/:id/status — Aceitar Pedido",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ACEITO\",\n  \"prestador_id\": 2\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pedidos/1/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos", "1", "status"]
+            },
+            "description": "Prestador aceita o pedido. Transição: PENDENTE → ACEITO. Requer prestador_id."
+          },
+          "response": [
+            {
+              "name": "Status atualizado",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": 1,\n  \"cliente_id\": 1,\n  \"prestador_id\": 2,\n  \"status\": \"ACEITO\",\n  \"total\": \"103.80\",\n  \"updated_at\": \"2026-05-11T18:20:46.065Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "PATCH /api/pedidos/:id/status — Em Preparo",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"EM_PREPARO\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pedidos/1/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos", "1", "status"]
+            },
+            "description": "Prestador confirma retirada na cozinha. Transição: ACEITO → EM_PREPARO."
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /api/pedidos/:id/status — Coletado",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COLETADO\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pedidos/1/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos", "1", "status"]
+            },
+            "description": "Prestador confirma que saiu para entrega. Transição: EM_PREPARO → COLETADO."
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /api/pedidos/:id/status — Finalizado",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"FINALIZADO\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pedidos/1/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos", "1", "status"]
+            },
+            "description": "Entrega concluída. Transição: COLETADO → FINALIZADO."
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /api/pedidos/:id/status — Cancelado",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CANCELADO\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pedidos/1/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pedidos", "1", "status"]
+            },
+            "description": "Cancela o pedido. Permitido apenas nos estados PENDENTE e ACEITO."
+          },
+          "response": [
+            {
+              "name": "Transição inválida",
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"erro\": \"Transicao invalida: FINALIZADO → CANCELADO. Permitidas: nenhuma\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
