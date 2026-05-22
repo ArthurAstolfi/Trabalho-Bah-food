@@ -1,5 +1,6 @@
 const pedidoRepository  = require('../repositories/pedidoRepository');
 const usuarioRepository = require('../repositories/usuarioRepository');
+const producer          = require('../messaging/producer');
 
 // Maquina de estados: quais transicoes sao permitidas
 const TRANSICOES = {
@@ -45,7 +46,9 @@ const criar = async ({ cliente_id, endereco_entrega, observacao, itens }) => {
     itens,
   });
 
-  return pedidoRepository.findById(pedido.id);
+  const pedidoCompleto = await pedidoRepository.findById(pedido.id);
+  producer.pedidoCriado(pedidoCompleto);
+  return pedidoCompleto;
 };
 
 const listar = async ({ status, cliente_id } = {}) => {
@@ -100,7 +103,9 @@ const atualizarStatus = async (id, { status, prestador_id }) => {
     }
   }
 
-  return pedidoRepository.updateStatus(id, { status, prestador_id });
+  const pedidoAtualizado = await pedidoRepository.updateStatus(id, { status, prestador_id });
+  producer.pedidoStatusAtualizado(pedidoAtualizado);
+  return pedidoAtualizado;
 };
 
 const listarPorUsuario = async (usuario_id) => {
