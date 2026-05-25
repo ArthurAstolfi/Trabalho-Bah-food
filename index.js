@@ -20,6 +20,6 @@ const iniciar = async () => {
 };
 
 iniciar().catch((err) => {
-  console.error('Falha ao inicializar:', err.message);
+  console.error('Falha ao inicializar:', err);
   process.exit(1);
 });
