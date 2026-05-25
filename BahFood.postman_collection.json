@@ -1,4 +1,4 @@
-{
+ {
   "info": {
     "name": "Bah-Food API",
     "description": "Coleção de endpoints REST do projeto Bah-Food — Sprint 1\nBackend: Node.js + Express | Banco: PostgreSQL\nBase URL: http://localhost:3000",
