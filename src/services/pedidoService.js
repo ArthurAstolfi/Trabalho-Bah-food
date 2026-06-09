@@ -51,8 +51,8 @@ const criar = async ({ cliente_id, endereco_entrega, observacao, itens }) => {
   return pedidoCompleto;
 };
 
-const listar = async ({ status, cliente_id } = {}) => {
-  return pedidoRepository.findAll({ status, cliente_id });
+const listar = async ({ status, cliente_id, prestador_id } = {}) => {
+  return pedidoRepository.findAll({ status, cliente_id, prestador_id });
 };
 
 const buscarPorId = async (id) => {

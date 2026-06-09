@@ -51,7 +51,7 @@ const findById = async (id) => {
   return rows[0] || null;
 };
 
-const findAll = async ({ status, cliente_id } = {}) => {
+const findAll = async ({ status, cliente_id, prestador_id } = {}) => {
   const params = [];
   const conditions = [];
 
@@ -62,6 +62,10 @@ const findAll = async ({ status, cliente_id } = {}) => {
   if (cliente_id) {
     params.push(Number(cliente_id));
     conditions.push(`p.cliente_id = $${params.length}`);
+  }
+  if (prestador_id) {
+    params.push(Number(prestador_id));
+    conditions.push(`p.prestador_id = $${params.length}`);
   }
 
   const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';

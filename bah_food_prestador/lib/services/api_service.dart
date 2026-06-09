@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/foundation.dart'
+    show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:http/http.dart' as http;
 import '../models/usuario.dart';
 import '../models/pedido.dart';
 
-// Detecta automaticamente o host correto por plataforma:
-//   Android emulator → 10.0.2.2  (aponta pro localhost do host)
-//   Web / Windows / outros → localhost
 String get kBaseUrl {
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     return 'http://10.0.2.2:3000/api';
@@ -30,7 +28,7 @@ class ApiService {
   static Future<Usuario> criarUsuario({
     required String nome,
     required String email,
-    String perfil = 'CLIENTE',
+    String perfil = 'PRESTADOR',
   }) async {
     final response = await http.post(
       Uri.parse('$kBaseUrl/usuarios'),
@@ -45,9 +43,12 @@ class ApiService {
     throw Exception(body['error'] ?? 'Erro ao criar usuário');
   }
 
-  static Future<List<Pedido>> listarPedidosDoUsuario(int usuarioId) async {
-    final response =
-        await http.get(Uri.parse('$kBaseUrl/usuarios/$usuarioId/pedidos'));
+  // Pedidos com status PENDENTE — visíveis para todos os prestadores
+  static Future<List<Pedido>> listarPedidosPendentes() async {
+    final response = await http.get(
+      Uri.parse('$kBaseUrl/pedidos').replace(
+          queryParameters: {'status': 'PENDENTE'}),
+    );
     if (response.statusCode == 200) {
       final list = jsonDecode(response.body) as List<dynamic>;
       return list
@@ -55,6 +56,21 @@ class ApiService {
           .toList();
     }
     throw Exception('Erro ao listar pedidos: ${response.statusCode}');
+  }
+
+  // Pedidos onde este prestador é o responsável
+  static Future<List<Pedido>> listarMeusPedidos(int prestadorId) async {
+    final response = await http.get(
+      Uri.parse('$kBaseUrl/pedidos').replace(
+          queryParameters: {'prestador_id': '$prestadorId'}),
+    );
+    if (response.statusCode == 200) {
+      final list = jsonDecode(response.body) as List<dynamic>;
+      return list
+          .map((j) => Pedido.fromJson(j as Map<String, dynamic>))
+          .toList();
+    }
+    throw Exception('Erro ao listar meus pedidos: ${response.statusCode}');
   }
 
   static Future<Pedido> buscarPedido(int id) async {
@@ -66,27 +82,24 @@ class ApiService {
     throw Exception('Pedido não encontrado');
   }
 
-  static Future<Pedido> criarPedido({
-    required int clienteId,
-    required String enderecoEntrega,
-    String? observacao,
-    required List<Map<String, dynamic>> itens,
+  static Future<Pedido> atualizarStatus({
+    required int pedidoId,
+    required String novoStatus,
+    int? prestadorId,
   }) async {
-    final response = await http.post(
-      Uri.parse('$kBaseUrl/pedidos'),
+    final body = <String, dynamic>{'status': novoStatus};
+    if (prestadorId != null) body['prestador_id'] = prestadorId;
+
+    final response = await http.patch(
+      Uri.parse('$kBaseUrl/pedidos/$pedidoId/status'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'cliente_id': clienteId,
-        'endereco_entrega': enderecoEntrega,
-        if (observacao != null && observacao.isNotEmpty) 'observacao': observacao,
-        'itens': itens,
-      }),
+      body: jsonEncode(body),
     );
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return Pedido.fromJson(
           jsonDecode(response.body) as Map<String, dynamic>);
     }
-    final body = jsonDecode(response.body);
-    throw Exception(body['error'] ?? 'Erro ao criar pedido');
+    final err = jsonDecode(response.body);
+    throw Exception(err['error'] ?? 'Erro ao atualizar status');
   }
 }
