@@ -35,4 +35,13 @@ const buscarPorId = async (id) => {
   return usuario;
 };
 
-module.exports = { criar, buscarPorId };
+const buscarPorEmail = async (email) => {
+  if (!email) {
+    const err = new Error('Campo obrigatorio: email');
+    err.status = 400;
+    throw err;
+  }
+  return usuarioRepository.findByEmail(email.toLowerCase());
+};
+
+module.exports = { criar, buscarPorId, buscarPorEmail };

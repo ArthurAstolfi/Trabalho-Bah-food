@@ -10,4 +10,13 @@ const buscarPorId = async (req, res) => {
   res.json(usuario);
 };
 
-module.exports = { criar, buscarPorId };
+const buscarPorEmail = async (req, res) => {
+  const { email } = req.query;
+  const usuario = await usuarioService.buscarPorEmail(email);
+  if (!usuario) {
+    return res.status(404).json({ error: 'Usuario nao encontrado' });
+  }
+  res.json(usuario);
+};
+
+module.exports = { criar, buscarPorId, buscarPorEmail };

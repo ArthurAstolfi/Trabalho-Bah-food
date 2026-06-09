@@ -4,8 +4,10 @@ const pedidoController  = require('../controllers/pedidoController');
 
 const router = Router();
 
-router.post('/',        usuarioController.criar);
-router.get('/:id',      usuarioController.buscarPorId);
-router.get('/:id/pedidos', pedidoController.listarPorUsuario);
+// GET /api/usuarios/buscar?email=xxx  deve vir ANTES de /:id
+router.get('/buscar',        usuarioController.buscarPorEmail);
+router.post('/',             usuarioController.criar);
+router.get('/:id',           usuarioController.buscarPorId);
+router.get('/:id/pedidos',   pedidoController.listarPorUsuario);
 
 module.exports = router;
